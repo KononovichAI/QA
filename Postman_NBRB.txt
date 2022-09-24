@@ -1,0 +1,38 @@
+Method:
+GET
+
+URL: 
+https://www.nbrb.by/api/exrates/rates/dynamics/431
+(Result URL: https://www.nbrb.by/api/exrates/rates/dynamics/431?enddate={{currentdate}}&startdate={{startdate}})
+
+
+Params(key:value):  
+enddate: {{currentdate}}
+startdate: {{startdate}}
+
+Pre-request script: 
+var moment = require('moment');
+pm.environment.set('currentdate', moment().format(("YYYY-MM-DD")));
+pm.environment.set('startdate', moment().subtract(6, 'day').format(("YYYY-MM-DD")));
+
+Tests:
+var template = `
+    <style type="text/css">
+        .tftable th {font-size:18px;background-color:#87ceeb; border-width: 2px; text-align:center; padding: 6px;border-color: #87ceeb; border-style: solid;}
+        .tftable td {font-size:14px; border-width: 2px; text-align:center; padding: 8px;border-color: #87ceeb; border-style: solid;}
+    </style>
+   
+    <table class="tftable">
+        <tr>
+            <th>Date</th>
+            <th>Rate</th>
+        </tr>        
+            {{#each response}} 
+                <tr>
+                    <td>{{Date}}</td>
+                    <td>{{Cur_OfficialRate}}</td>
+                </tr>
+            {{/each}}
+    </table>
+`;
+pm.visualizer.set(template, {response: pm.response.json()});
